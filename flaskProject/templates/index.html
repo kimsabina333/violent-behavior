@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Violent Behaviour Detection</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        h1 {
+            color: #6a0dad;
+            margin-bottom: 20px;
+        }
+        #upload-form {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        #upload-form input[type="text"],
+        #upload-form input[type="email"],
+        #upload-form input[type="file"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #upload-form input[type="submit"] {
+            background-color: #6a0dad;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #upload-form input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        #output-image {
+            margin-top: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+        }
+        .form-title {
+            font-size: 24px;
+            color: #6a0dad;
+            margin-bottom: 10px;
+        }
+        footer {
+            margin-top: auto;
+            background-color: #6a0dad;
+            color: white;
+            padding: 10px 20px;
+            width: 100%;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Upload an image for object detection</h1>
+    <form id="upload-form" action="/predict" method="post" enctype="multipart/form-data">
+        <div class="form-title">User Information</div>
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <div class="form-title">Upload Image</div>
+        <input type="file" name="file" id="file-input" accept="image/*" required>
+        <input type="submit" value="Upload">
+    </form>
+    <br>
+    <h2>Output Image:</h2>
+    <img id="output-image" src="" alt="Output will be displayed here">
+
+    <footer>
+        &copy; 2024 Violent Behaviour Detection
+    </footer>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        form.onsubmit = async function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('file-input');
+            const formData = new FormData(form);
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                document.getElementById('output-image').src = url;
+            } else {
+                alert('Error uploading image.');
+            }
+        };
+    </script>
+</body>
+</html>
